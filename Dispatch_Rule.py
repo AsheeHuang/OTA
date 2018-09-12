@@ -5,14 +5,22 @@ from Machine import *
 from heap import *
 from operator import attrgetter
 import time
-def Machine_Oriented(J,d, machine_rule =  lambda x : x.load ,job_rule = lambda x : x.priority) :
+def Machine_Oriented(J,d, machine_rule =  lambda x : x.load ,weight = None ) :
+    def normalize_transfer_time (transfer_time) :
+        return (transfer_time - 0) / (15 - 0)
+
     machines = Machines(J)
     Pieces_Produced, count = 0,0
+
     #job_assigned = [False for _ in range(len(J))] #initially unassigned
     while not machines.reach_deadline() : #does not reach deadline
         sel_m = machines.select_machine(machine_rule)
         if sel_m.avail == False : #no available machine
             break
+        """"""
+
+        job_rule = lambda x: x.processing_time_n * weight[0] - x.pieces_n * weight[1] - x.weight_n * weight[2] + normalize_transfer_time(x.transfer_time(sel_m.Temperature)) * weight[3]
+        """"""
         sel_job = sel_m.select_job(job_rule)
         if sel_job : #there is an available job
             insert_success = sel_m.assign_job(sel_job,d)

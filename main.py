@@ -6,11 +6,12 @@ from heap import *
 if __name__ == "__main__":
     for num_of_Dispatching_rule in range(1):
         path = './Normalized_data/data_'
-        m_path="./Result/result4"+".csv"
+        m_path="./Result/result5"+".csv"
         m = open(m_path, 'w')
         # m.write('Dead Line,POH\n')
         num_run_dataset = 1
         num_hours = 6
+
         # for time in range(1,7) :
         #     sum_pieces = 0
         #     for i in range(1,num_run_dataset+1) :
@@ -67,15 +68,15 @@ if __name__ == "__main__":
             # print(" ".join(str(x) for x in weights[i]))
             m.write(" ".join(str(x) for x in weights[i]) + ",")
         m.write("\n")
-        for n in range(300,501,10) :
+        for n in range(300,301,10) :
             for w in range(len(weights)) :
                 for i in range(1, num_run_dataset+1) :
                     path2 = path + str(i) + "_" + str(n)
                     J = []
-                    ReadData(path2, J, weights[w])
+                    ReadData(path2, J)
                     for time in range(1,num_hours+1) :
                         for j in J : j.is_processed = False #reset all jobs
-                        pieces[w][time-1][i-1], count = Machine_Oriented(J, 60 * time)
+                        pieces[w][time-1][i-1], count = Machine_Oriented(J, 60 * time,weight = weights[w])
 
             """Calculate average"""
             sum_pieces = [[None for _ in range(num_hours)] for _ in range(len(weights))]

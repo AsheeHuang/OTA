@@ -96,7 +96,9 @@ class Machines(object) :
         sel_machine = self.machine_list[1]
         for m in self.machine_list[1:] :
             if m.avail == True and m.Jobs and sel_machine.Jobs:
-                if selection_rule(sel_machine) > selection_rule(m) or (selection_rule(sel_machine) == selection_rule(m)  and second_rule(sel_machine.Jobs[0]) > second_rule(m.Jobs[0])):
+
+                # print((selection_rule(sel_machine) == selection_rule(m)  and second_rule(sel_machine.Jobs[0]) > second_rule(m.Jobs[0])))
+                if sel_machine.load > m.load or (sel_machine.load == m.load and sel_machine.Jobs[0].release_date > m.Jobs[0].release_date):
                     sel_machine = m
         # print(sel_machine.index,sel_machine.Jobs)
         return sel_machine
