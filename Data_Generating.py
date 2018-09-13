@@ -4,10 +4,9 @@ from Job import JOB
 
 if __name__ == "__main__":
     R = [0.2, 0.4, 0.6, 0.8, 1.0, 1.25, 1.5, 1.75, 2, 3]
-    for i in range(1, 5):
-
+    for i in range(1, 2):
         random.seed(i)
-        for j in range(300,501,10):
+        for j in range(200,501):
             # print(i,j)
             MIN_MAX = [[float('inf'), 0] for _ in range(4)]
             m = open('Normalized_data/data_' + str(i) + "_" + str(j) + ".csv", 'w')
@@ -17,15 +16,17 @@ if __name__ == "__main__":
             J = []
             sums = 0
             w_lb = random.randint(1, 24)
-            w_ub = min(w_lb + random.randint(1, 24), 25)
-            m_lb = 1
-            m_ub = min(m_lb + random.randint(1, 15), 25)
-            # print(w_lb, w_ub)
-            # print(v_lb, v_ub)
+            w_ub = min(w_lb + random.randint(5, 24), 25)
+
+            m_range = random.sample([i for i in range(2, 16)], 2)
+            m_lb = min(m_range)
+            m_ub = max(m_range)
+            p_mean = random.randint(10,20)
+            p_var = random.random() * 10
             for k in range(0, j):
                 job = JOB()
 
-                job.Generating_Data(p_variance=random.random() * 10 , w_range = (w_lb,w_ub) , m_range =  (m_lb,m_ub),v_mean = random.random()*1.5)
+                job.Generating_Data(p_range=(p_mean, p_var), w_range = (w_lb,w_ub) , m_range =  (m_lb,m_ub),v_mean = random.random()*1.5)
                 # while job.processing_time == 0:
                 #     job.processing_time = round(random.gauss(15.94, 4.23), 3)
                 sums += job.processing_time
@@ -42,10 +43,13 @@ if __name__ == "__main__":
                 MIN_MAX[3][1] = max(MIN_MAX[3][1], len(job.Mj))
 
                 J.append(job)
-            R1 = R * int(j / len(R))
+            R1 = R * int(j / len(R) +1)
+
             random.shuffle(R1)
             sums /= j
             for c, v in enumerate(J):
+                # print(j,c,sums)
+                # print(c,len(R1),R1)
                 v.set_release_date(c,sums,R1[c])
                 m.write(str(v.processing_time) + "," + str(v.release_date) + "," + str(v.pieces) + "," + str(
                     v.weight) + "," + str(v.Temperature) + "\n")

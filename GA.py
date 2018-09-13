@@ -23,14 +23,14 @@ def generate_weight(weight_num = 4) :
     return weight
 class GA(object) :
     class chromosome() :
-        def __init__(self,weight):
+        def __init__(self,weight) :
             self.weight = weight
             self.fitness = None
             self.cal_fitness()
         def cal_fitness(self):
             self.fitness = sum_pieces(J,self.weight)
 
-    def __init__(self,path,population,generation=100,crossover_rate=0.8,mutation_rate=0.2):
+    def __init__(self,path,population,generation=100,crossover_rate=0.7,mutation_rate=0.2):
         self.population = population
         self.generation = generation
         self.crossover_rate = crossover_rate
@@ -56,6 +56,7 @@ class GA(object) :
                     self.bisect_insert(self.chromosomes,child)
             self.chromosomes = self.chromosomes[-self.population:]
         print(self.chromosomes[-1].weight,self.chromosomes[-1].fitness)
+        return self.chromosomes[-1].weight
 
 
 
@@ -100,10 +101,13 @@ class GA(object) :
 
 
 if __name__ == "__main__" :
-
-    for i in range(300,501,10) :
+    csv_path = './labeled_data.csv'
+    f = open(csv_path,'w')
+    f.write("data,w_1,w_2,w_3,w_4\n")
+    for i in range(300,401,10) :
         path = './Normalized_data/data_1_' + str(i)
         J = []
         ReadData(path,J)
         ga = GA(path,population=50)
-        ga.run()
+        weights = ga.run()
+        f.write(str(path) + "," + str(weights[0]) + "," + str(weights[1]) +"," + str(weights[2]) +"," + str(weights[3])+"\n" )
