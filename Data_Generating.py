@@ -22,7 +22,7 @@ if __name__ == "__main__":
             m_lb = min(m_range)
             m_ub = max(m_range)
             p_mean = random.randint(10,20)
-            p_var = random.random() * 10
+            p_var = 1+(random.random() * 10)
             for k in range(0, j):
                 job = JOB()
 
