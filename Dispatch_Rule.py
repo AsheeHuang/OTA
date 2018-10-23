@@ -3,6 +3,7 @@ import math
 import heapq
 from Machine import *
 from heap import *
+from random import random
 from operator import attrgetter
 import time
 def Machine_Oriented(J,d, machine_rule =  lambda x : x.load ,weight = None ) :
@@ -11,15 +12,55 @@ def Machine_Oriented(J,d, machine_rule =  lambda x : x.load ,weight = None ) :
 
     machines = Machines(J)
     Pieces_Produced, count = 0,0
-
+    weighted_tatal_lateness = 0
+    total_flow_time = 0
     #job_assigned = [False for _ in range(len(J))] #initially unassigned
     while not machines.reach_deadline() : #does not reach deadline
         sel_m = machines.select_machine(machine_rule)
         if sel_m.avail == False : #no available machine
             break
         """"""
+        job_rule = lambda x: x.processing_time_n * weight[0] - x.pieces_n * weight[1] - x.weight_n * weight[2] + x.due_date_n * weight[3] + normalize_transfer_time(x.transfer_time(sel_m.Temperature)) * weight[4]
+        """"""
+        sel_job = sel_m.select_job(job_rule)
+        if sel_job : #there is an available job
+            insert_success = sel_m.assign_job(sel_job,d)
+            if insert_success :#if insert int this job does not reach deadline
+                Pieces_Produced += sel_job.pieces
+                weighted_tatal_lateness += max(0,sel_m.load - sel_job.due_date) * sel_job.weight
+                total_flow_time += (sel_job.starting_time + sel_job.processing_time) - sel_job.release_date
+                count += 1
+                # print("sel job :", sel_job , " to " , sel_m.index, " load : ",sel_m.load, sel_m.avail)
 
-        job_rule = lambda x: x.processing_time_n * weight[0] - x.pieces_n * weight[1] - x.weight_n * weight[2] + normalize_transfer_time(x.transfer_time(sel_m.Temperature)) * weight[3]
+    return weighted_tatal_lateness ,Pieces_Produced ,total_flow_time / len(J), count
+def prob_model(J,d, machine_rule =  lambda x : x.load ,prob = None ) :
+    def normalize_transfer_time (transfer_time) :
+        return (transfer_time - 0) / (15 - 0)
+
+    machines = Machines(J)
+    Pieces_Produced, count = 0,0
+    prefix_prob = []
+    prefix_prob.append(prob[0])
+    for i in range(1,len(prob)) :
+        prefix_prob.append(prefix_prob[i-1] + prob[i])
+    # print(prefix_prob)
+    #job_assigned = [False for _ in range(len(J))] #initially unassigned
+    while not machines.reach_deadline() : #does not reach deadline
+        sel_m = machines.select_machine(machine_rule)
+        if sel_m.avail == False : #no available machine
+            break
+        """"""
+        job_rule = None
+
+        rand_num = random()
+        if  0 <= rand_num < prob[0] :
+            job_rule = lambda x : x.processing_time_n
+        elif prob[0] <= rand_num < prob[1]:
+            job_rule = lambda x : x.pieces_n
+        elif prob[1] <= rand_num < prob[2] :
+            job_rule = lambda x : x.weight_n
+        else :
+            job_rule = lambda x : normalize_transfer_time(x.transfer_time(sel_m.Temperature))
         """"""
         sel_job = sel_m.select_job(job_rule)
         if sel_job : #there is an available job

@@ -101,7 +101,7 @@ class GA(object) :
 
 
 if __name__ == "__main__" :
-    csv_path = './labeled_data.csv'
+    csv_path = './labeled_data2.csv'
     f = open(csv_path,'w')
     f.write("data,w_1,w_2,w_3,w_4\n")
     for i in range(300,401,10) :

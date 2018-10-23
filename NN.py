@@ -1,7 +1,9 @@
 import tensorflow as tf
 import pandas
 from random import sample
-
+"""
+This model does not work
+"""
 def data_features(path) :
     features = []
 
@@ -27,6 +29,7 @@ def next_batch(data ,n = 100) :
         # print(s)
         x.append(data_features(data['data'][s]))
         y_.append(data.iloc[s,1:5])
+
     return x,y_
 
 
@@ -49,32 +52,34 @@ if __name__ == "__main__" :
     y = tf.nn.softmax(tf.matmul(x, W) + b)  # prediction
     y_ = tf.placeholder(tf.float32, [None, 4])  # actual
 
-    entropy = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=y_,logits=y))
+    # entropy = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=y_,logits=y))
+    loss = tf.losses.absolute_difference(y_,y)
 
-    train_step = tf.train.GradientDescentOptimizer(0.5).minimize(entropy)
+
+    train_step = tf.train.GradientDescentOptimizer(0.01).minimize(loss)
 
     sess = tf.InteractiveSession()
-    tf.global_variables_initializer().run()
-
-
+    sess.run(tf.global_variables_initializer())
+    # tf.global_variables_initializer().run()
 
     for i in range(20) :
-        batch_x,batch_y = next_batch(train_data,1)
+        batch_x,batch_y = next_batch(train_data,20)
         sess.run(train_step, feed_dict={x: batch_x, y_: batch_y})
-        print(b.eval())
-        # print(W.value(), b.value())
+        # print(loss.eval())
+
         # correct_prediction = tf.equal(tf.argmax(y, 1),tf.argmax(y_, 1))
         # print(type(correct_prediction))
-
-        mse = tf.losses.softmax_cross_entropy(y,y_)
-        mse_loss = tf.reduce_sum(mse)
+        # print(batch_y)
+        # print(y_.)
+        diff = tf.losses.absolute_difference(y,y_)
+        # mse_loss = tf.reduce_sum(mse)
         # correct_prediction = tf.equal(tf.argmax(y, 1), tf.argmax(y_, 1))
         # accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
         test_data_x , test_data_y = next_batch(test_data,50)
 
 
 
-        print("Step " + str(i)  , sess.run(mse_loss, feed_dict={x: test_data_x, y_: test_data_y}))
+        print("Step " + str(i)  , sess.run(diff, feed_dict={x: test_data_x, y_: test_data_y}))
 
 
 

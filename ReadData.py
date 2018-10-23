@@ -5,7 +5,7 @@ def ReadData(path, J ):
     Read = open(path + ".csv", 'r')
     R2 = open(path + '_Mj.csv')
     R3 = open(path + '_Normal.csv')
-    MIN_MAX = [[float('inf'), 0] for i in range(4)]
+    MIN_MAX = [[float('inf'), 0] for i in range(5)]
     Read.readline()
     i = 0
     k = 0
@@ -24,11 +24,13 @@ def ReadData(path, J ):
         j.pieces = int(line[2])
         j.weight = int(line[3])
         j.Temperature = int(line[4])
+        j.due_date = int(float(line[5]))
         j.WP = j.pieces * j.weight / j.processing_time
 
         j.processing_time_n = (j.processing_time - MIN_MAX[0][0]) / (MIN_MAX[0][1] - MIN_MAX[0][0])
         j.pieces_n = (j.pieces - MIN_MAX[1][0]) / (MIN_MAX[1][1] - MIN_MAX[1][0])
         j.weight_n = (j.weight - MIN_MAX[2][0]) / (MIN_MAX[2][1] - MIN_MAX[2][0])
+        j.due_date_n = (j.due_date - MIN_MAX[4][0]) / (MIN_MAX[4][1] - MIN_MAX[4][0])
 
 
         J.append(j)

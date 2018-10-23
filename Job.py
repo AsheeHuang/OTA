@@ -14,11 +14,13 @@ class JOB:
         self.Machine_Assigned = 0
         self.starting_time = 0
         self.is_processed = False
+        self.due_date = None
         #normalized data
         self.processing_time_n = None
         self.pieces_n = None
         self.weight_n = None
         self.Mj_n = None
+        self.due_date_n = None
         #priority of be chosen
         self.priority = None
     def __repr__(self):
@@ -64,6 +66,14 @@ class JOB:
     def set_release_date(self,index,sums,r):
         self.release_date = round(index / 25 * sums * r)
         # self.release_date = random.randint(0, 1440)
+    def set_due_date(self,sums):
+        alpha = [i for i in np.arange(-0.2, 1, 0.1)]
+        beta = [i for i in np.arange(0.7, 1.9, 0.1)]
+        a = random.choice(alpha)
+        b = random.choice(beta)
+        if b >= a: b = random.choice([i for i in np.arange(1, 1.9, 0.1)])
+
+        self.due_date = int(max(random.randint(5,10),round(random.uniform(sums / 20 * a, sums / 20 * b))) + self.release_date + self.processing_time)
     def transfer_time(self,curr_temp):
         setup = 5 + abs(self.Temperature - curr_temp) * (0.1)
         setup = int(ceil(setup))

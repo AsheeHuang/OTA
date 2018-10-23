@@ -72,7 +72,7 @@ class Machines(object) :
                 if self.load >= j.release_date :
                     del_list.append(j)
                     # print(self.index,j.processing_time,j,self.load)
-                    heapq.heappush(self.Job_list, (rule(j) + self.count / self.num_jobs + uniform(0,0.001) , j)) #heapq does not support same value comparison
+                    heapq.heappush(self.Job_list, (rule(j) + uniform(0,0.001) , j)) #heapq does not support same value comparison
                     self.count += 1
                     # heapq.heapify(self.Job_list)
                     # self.Job_list.append((j.processing_time,j))
